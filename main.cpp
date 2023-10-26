@@ -4,17 +4,17 @@
 
 using namespace std;
 
-void getInput(char *buffer);
+char* getInput(char *str);
 char* allocString(char *str, char *buffer);
 
 struct Trx{
-  int amount;
+  double amount;
   char dateTime[17];
   char description[256];
   bool isExpense;
 };
 
-struct Trx* newTrx(int amount,
+struct Trx* newTrx(double amount,
                    char *dateTime,
                    char *description,
                    bool isExpense = true){
@@ -29,10 +29,10 @@ struct Trx* newTrx(int amount,
 
 void stampTrx(Trx* trx){
   cout << "Trx:{" << endl;
-  cout << "\t" << trx->amount << "," << endl;
-  cout << "\t" << trx->dateTime << "," << endl;
-  cout << "\t" << trx->description << "," << endl;
-  cout << "\t" << trx->isExpense << "," << endl;
+  cout << "\tamount: " << trx->amount << "," << endl;
+  cout << "\tdateTime: " << trx->dateTime << "," << endl;
+  cout << "\tdescription: " << trx->description << "," << endl;
+  cout << "\tisExpense: " << trx->isExpense << "," << endl;
   cout << "}" << endl;
 }
 
@@ -48,8 +48,7 @@ int main(int argc, char *argv[]) {
     allocString(username, argv[1]);
   } else {
     cout << "Benvenuto come ti chiami?\t";
-    getInput(buffer);
-    username = allocString(username, buffer);
+    username = getInput(username);
   }
 
   cout << username; 
@@ -67,12 +66,17 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void getInput(char *buffer){
+char *getInput(char *str){
+  char buffer[256] = {};
   char c;
-  while(cin >> c){
+  do{
+    c = getchar();
     buffer[strlen(buffer)] = c;
-    cout << c << endl;
-  }
+  }while(c != '\n' && strlen(buffer) < sizeof(buffer));
+  buffer[strlen(buffer)-1] = '\0';
+  str = (char*) malloc(strlen(buffer));
+  strcpy(str,buffer);
+  return str;
 }
 
 char* allocString(char *str, char *buffer){
@@ -82,20 +86,18 @@ char* allocString(char *str, char *buffer){
 }
 
 void insertTrx(Trx*trx){
-  char buffer[256];
-  int amount;
+  double amount;
   cout << "amount:\t";
   cin >> amount;
-  
+  getchar();
+ 
   cout << "dateTime:\t";
-  getInput(buffer);
   char *dateTime;
-  dateTime = allocString(dateTime,buffer);
+  dateTime = getInput(dateTime);
 
   cout << "description:\t";
-  getInput(buffer);
   char *description;
-  description = allocString(description,buffer);
+  description = getInput(description);
   
   trx = newTrx(amount,dateTime,description);
  
